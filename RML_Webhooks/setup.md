@@ -14,7 +14,9 @@
     c. Password
 
 4. Inside `whatsapp_webhook` function,
-    change  `response["mobile_number"] = "whatsappbot_mobile_number"`
+
+    change  `response["mobile_number"] = "whatsappbot_mobile_number"` (before try block)
+
     change  `rm_username = "rml_username_provided"`
             `rm_password = "rml_password_provided"`
 
