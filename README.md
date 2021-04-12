@@ -10,3 +10,5 @@ Currently includes:
             - LiveChat v3.5
       
   2. GupShup
+
+Adding soon: Infobip, Netcore
