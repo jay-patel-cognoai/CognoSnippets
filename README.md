@@ -11,4 +11,7 @@ Currently includes:
       
   2. GupShup
 
+      see setup guide: https://github.com/VinayTomarAIC/WhatsAppWebhooks/blob/main/GupShup_Webhooks/setup.md
+      
+      
 Adding soon: Infobip, Netcore
