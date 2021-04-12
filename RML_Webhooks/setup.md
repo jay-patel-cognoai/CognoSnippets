@@ -6,17 +6,19 @@
     You will find this url in Bot channel 's WhatsApp configuration.
     if the console domain name is different replace `easychat-dev.allincall.in` with your console's domain.
 
-2. RML will provide the following:
+2. Copy paste `rm_WA_webhook.py` code.
+
+3. RML will provide the following:
     a. WhatsApp Bot Mobile Number
     b. Username
     c. Password
 
-3. Inside `whatsapp_webhook` function,
+4. Inside `whatsapp_webhook` function,
     change  `response["mobile_number"] = "whatsappbot_mobile_number"`
     change  `rm_username = "rml_username"`
             `rm_password = "rml_password"`
 
-4. API Key Caching:
+5. API Key Caching:
     By default RML WA Webhook uses non-cached API key function `GET_API_KEY`.
     RML Token API can be cached for 1 hour. 
     `GET_RML_JWT_TOKEN`is the cached api_key function.
@@ -37,6 +39,6 @@
         -   python manage.py makemigrations & migrate
 
         -   gunicorn restart
-        
+
         -   Create one RouteMobileToken object and set token value as "token"
 
