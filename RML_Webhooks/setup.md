@@ -17,4 +17,22 @@
             `rm_password = "rml_password"`
 
 4. API Key Caching:
-    By default RML 
+    By default RML WA Webhook uses non-cached API key function `GET_API_KEY`.
+    RML Token API can be cached for 1 hour. 
+    `GET_RML_JWT_TOKEN`is the cached api_key function.
+    Before using cached api key, we need to follow the below steps:
+        -   Create `RouteMobileToken` model
+
+            in EasyChatApp/models.py
+            >   from django.utils import timezone as tz
+                class RouteMobileToken(models.Model):
+                    token = models.CharField(max_length=1000, default='token', help_text="This is a Bearer token for all RML APIs")
+                    token_generated_on = models.DateTimeField(default=tz.now)
+
+            in EasyChatApp/admin.py
+            >   class RouteMobileTokenAdmin(admin.ModelAdmin):
+                    list_display = ['token_generated_on','token']
+
+        -   Create one RouteMobileToken object and set token value as "token"
+
+        
