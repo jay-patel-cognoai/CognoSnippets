@@ -34,6 +34,9 @@
             >   class RouteMobileTokenAdmin(admin.ModelAdmin):
                     list_display = ['token_generated_on','token']
 
+        -   python manage.py makemigrations & migrate
 
+        -   gunicorn restart
+        
         -   Create one RouteMobileToken object and set token value as "token"
 
