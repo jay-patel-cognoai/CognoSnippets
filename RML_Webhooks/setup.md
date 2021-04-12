@@ -6,7 +6,7 @@
     You will find this url in Bot channel 's WhatsApp configuration.
     if the console domain name is different replace `easychat-dev.allincall.in` with your console's domain.
 
-2. Copy paste `rm_WA_webhook.py` code.
+2. Copy paste `rml_WA_Webhook.py` code.
 
 3. RML will provide the following:
     a. WhatsApp Bot Mobile Number
