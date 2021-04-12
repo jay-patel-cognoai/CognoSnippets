@@ -21,6 +21,7 @@
     RML Token API can be cached for 1 hour. 
     `GET_RML_JWT_TOKEN`is the cached api_key function.
     Before using cached api key, we need to follow the below steps:
+
         -   Create `RouteMobileToken` model
 
             in EasyChatApp/models.py
@@ -33,6 +34,6 @@
             >   class RouteMobileTokenAdmin(admin.ModelAdmin):
                     list_display = ['token_generated_on','token']
 
+
         -   Create one RouteMobileToken object and set token value as "token"
 
-        
