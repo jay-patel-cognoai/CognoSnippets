@@ -6,7 +6,7 @@
     You will find this url in Bot channel 's WhatsApp configuration.
     if the console domain name is different replace `easychat-dev.allincall.in` with your console's domain.
 
-2. Copy paste `rm_WA_webhook.py` code.
+2. Copy paste `rml_WA_Webhook.py` code.
 
 3. RML will provide the following:
     a. WhatsApp Bot Mobile Number
@@ -15,8 +15,8 @@
 
 4. Inside `whatsapp_webhook` function,
     change  `response["mobile_number"] = "whatsappbot_mobile_number"`
-    change  `rm_username = "rml_username"`
-            `rm_password = "rml_password"`
+    change  `rm_username = "rml_username_provided"`
+            `rm_password = "rml_password_provided"`
 
 5. API Key Caching:
     By default RML WA Webhook uses non-cached API key function `GET_API_KEY`.
@@ -42,3 +42,13 @@
 
         -   Create one RouteMobileToken object and set token value as "token"
 
+# Steps to enable RML WA LiveChat
+1. After RML WA Webhook setup completion and assuming LiveChat is already enabled in the bot configuration, copy paste `rml_LiveChatBotChannelwebhook.py` into LiveChatBotChannelWebhook model object from Admin panel.
+
+2. Inside `GET_API_KEY` change the credentials as:
+        username = "rml_username_provided"
+        password = "rml_password_provided"
+
+3. `rml_LiveChatBotChannelwebhook` uses cached version of API Key Function, so make sure steps mentioned earlier to use cached api key are implemented first.
+
+4. Inside `/LiveChatApp/assign_tasks.py` look where the rml credentials are used. Replace them with those provided by RML for your Bot.
