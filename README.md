@@ -8,6 +8,8 @@ Currently includes:
       
       supports:
             - LiveChat v3.5
+            - Call-to-action
+            - Quick Reply
       
   2. GupShup
 
