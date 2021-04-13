@@ -227,6 +227,7 @@ def get_whatsapp_file_attachment(API_KEY, attachment_packet, attachment_type):
         exc_type, exc_obj, exc_tb = sys.exc_info()
         logger.error("save_file_from_remote_server_to_local: %s at %s", str(E), str(exc_tb.tb_lineno), extra=log_param)
     return attachment_path
+    
 
 
 
@@ -455,8 +456,7 @@ def whatsapp_webhook(request_packet):
         file_caption = None
         REVERSE_WHATSAPP_MESSAGE_DICT = {}
         reverse_mapping_index=0
-        pre_auth_user_message = ""
-        if message_type == "text":
+        if message_type == "text" or message_type == "button":
             is_attachement = False
             is_location = False
         if is_attachement:
@@ -470,11 +470,17 @@ def whatsapp_webhook(request_packet):
             message = "attachment"
         else:
             #   else get user Message:
-            message = request_packet["messages"][0]["text"]["body"]
+            if message_type == "text":
+                message = request_packet["messages"][0]["text"]["body"]
+            elif message_type == "button":
+                message = request_packet["messages"][0]["button"]["text"]
+                logger.info("User quick reply: %s", str(message), extra=log_param)    
+
             reverse_message = None
             reverse_message = get_message_from_reverse_whatsapp_mapping(message, sender)
             if reverse_message != None:
                 message = reverse_message
+
             #Go Back Check
             is_go_back_enabled = False
             if first_time_user == "false":
@@ -488,11 +494,8 @@ def whatsapp_webhook(request_packet):
 
 
 
-
-    #   WEBHOOK EXECUTE FUNCTION CALL
-        mobile = str(sender)  # User mobile
-        waNumber = str(receiver)# Bot Whatsapp Number   
-
+        mobile = str(sender)      # User Mobile Number
+        waNumber = str(receiver)  # Bot Whatsapp Number
 
 
     #   WEBHOOK EXECUTE FUNCTION CALL
@@ -516,7 +519,6 @@ def whatsapp_webhook(request_packet):
         except  Exception as E:
             logger.error("Cannot identify Last Intent: %s", str(E), extra=log_param)
         
-
 
     #   USER OBJECT:    
         user = Profile.objects.get(user_id=str(mobile))
@@ -632,10 +634,11 @@ def whatsapp_webhook(request_packet):
 
 
     #   TEXT FORMATTING AND EMOJIZING:
-        message = html_tags_formatter(message)
+        logger.info("Bot Message(Original): %s", str(message), extra=log_param)
+        message = html_tags_formatter(message)        
         message = unicode_formatter(message)
         message = get_emojized_message(message)       
-        logger.info("Bot Message: %s", str(message), extra=log_param)
+        logger.info("Bot Message(Formatted): %s", str(message), extra=log_param)
 
         
     #   RESPONSE MODES:
@@ -652,7 +655,9 @@ def whatsapp_webhook(request_packet):
     #   2.STICKY CHOICES: sending choices and message in same bubble.
         message_with_choice = False 
         if "message_with_choice" in modes.keys() and modes["message_with_choice"] == "true":
-            message_with_choice = True        
+            message_with_choice = True
+        if recommendation_str == "" and choice_str == "":
+            message_with_choice = False
 
     #   3. BOT LINK CARDS: sending cards containing urls/links
         if "card_for_links" in modes.keys() and modes["card_for_links"] == "true":
@@ -694,7 +699,7 @@ def whatsapp_webhook(request_packet):
                 choice_str = ""
         else:
             if message_with_choice == True:
-        # 2. Sticky choices text:        
+        # 2. Sticky choices text:
                 final_text_message = message.replace("$$$", "")
                 if len(recommendations)>0:
                     final_text_message = final_text_message+recommendation_str.replace("$$$", "")
@@ -714,6 +719,7 @@ def whatsapp_webhook(request_packet):
                 choice_str = ""
             else:
         # 3. Regular single text:
+                logger.info("Regular Small Text: %s", str(final_text_message), extra=log_param)
                 for small_message in final_text_message.split("$$$"):
                     small_message = html_list_formatter(small_message)
                     if small_message != "":
