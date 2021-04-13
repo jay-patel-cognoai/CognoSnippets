@@ -398,7 +398,7 @@ def whatsapp_webhook(request_packet):
     response = {}
     response["status_code"] = 500
     response["status_message"] = "Internal server issues"
-    response["mobile_number"] = "917710811811"
+    response["mobile_number"] = ""
     try:
     
     #   RML DELIVERY STATUS:    
@@ -418,8 +418,8 @@ def whatsapp_webhook(request_packet):
         
 
     # == CREDENTIALS AND DETAILS: ==============================================
-        rm_username = "KOTAK811"
-        rm_password = "Rml@kotak123"
+        rm_username = ""
+        rm_password = ""
         BOT_ID = "1"    
         API_KEY = GET_API_KEY(rm_username,rm_password)  # Note: for cached version use GET_RML_JWT_TOKEN(rm_username,rm_password)  after creating RouteMobileToken model. And mamually create a token object as "token" 
         logger.info("RML API_KEY: %s",str(API_KEY), extra=log_param)

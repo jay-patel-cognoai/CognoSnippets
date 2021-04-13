@@ -311,7 +311,7 @@ def whatsapp_webhook(request_packet):
     response = {}
     response["status_code"] = 500
     response["status_message"] = "Internal server issues"
-    response["mobile_number"] = "917710811811"
+    response["mobile_number"] = ""
     try:
     
     #   GUPSHUP DELIVERY STATUS:
@@ -335,8 +335,8 @@ def whatsapp_webhook(request_packet):
             logger.info("Added Mobile and Bot id in INCOMING_REQUEST_PACKET: %s",str(request_packet), extra=log_param)
 
     # == CREDENTIALS AND DETAILS: ==============================================
-        AUTHENTICATION_NUMBER = '2000188944' #@settings.AUTHENTICATION_NUMBER
-        AUTHENTICATION_KEY = 'yxYPH9'   #settings.AUTHENTICATION_KEY
+        AUTHENTICATION_NUMBER = '' #@settings.AUTHENTICATION_NUMBER
+        AUTHENTICATION_KEY = ''   #settings.AUTHENTICATION_KEY
         BOT_ID = remo_html_from_string(str(request_packet['bot_id']))
         sender = remo_html_from_string(str(request_packet["mobile"]))
         receiver = remo_html_from_string(str(response["mobile_number"]))
