@@ -130,8 +130,8 @@ def get_time_delta(date_str1, date_str2):
 
 def GET_API_KEY():
     API_KEY = ""
-    username = "KOTAKSECURE"
-    password = "KotakSec@321"
+    username = ""
+    password = ""
     try:
         logger.info("=== Inside RouteMobile_GET_API_KEY API ===", extra=log_param)
         url = "https://apis.rmlconnect.net/auth/v1/login/"
