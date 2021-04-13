@@ -271,6 +271,7 @@ def sendWhatsAppTextMessage(userid, password, message, phone_number, preview_url
 def sendWhatsAppMediaMessage(userid, password, media_type, media_url, caption, message, phone_number):
     import requests
     import urllib
+    import json
     try:
         logger.info("=== Inside Send WA Media Message API ===", extra=log_param)
         logger.info("Media Type: %s", media_type, extra=log_param)
@@ -284,12 +285,14 @@ def sendWhatsAppMediaMessage(userid, password, media_type, media_url, caption, m
             userid)+"""&auth_scheme=plain&password="""+str(password)+"""&v=1.1&format=json&media_url="""+str(media_url)+"""&caption="""+str(caption)+"""&msg="""+str(message)
         logger.info("Media Created URL: %s", url, extra=log_param)
         r = requests.get(url=url, timeout=15)
-        logger.info("WhatsApp Media: %s", r.text, extra=log_param)
-        if str(r.text[:7]) == "success":
+        content = json.loads(r.text)
+        logger.info("sendWhatsAppMediaMessage Response: %s", str(content), extra=log_param)
+        
+        if str(content['response']['status']) == "success":
             logger.info(media_type.upper()+" message sent successfully", extra=log_param)
             return True
         else:
-            logger.error("Failed to send "+media_type.upper()+" message: %s", extra=log_param)
+            logger.error("Failed to send "+media_type.upper()+" message", extra=log_param)
             return False
     except requests.Timeout as RT:
         exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -370,7 +373,6 @@ def whatsapp_webhook(request_packet):
         file_caption = None
         REVERSE_WHATSAPP_MESSAGE_DICT = {}
         reverse_mapping_index=0
-        pre_auth_user_message = ""
         if message_type == "text":
             is_attachement = False
             is_location = False
@@ -709,7 +711,7 @@ def whatsapp_webhook(request_packet):
             logger.info("Is Mixed Choices sent: %s", str(send_status), extra=log_param)
             choice_str = ""
             recommendation_str = ""
-            
+
 
     #   SENDING CHOICES:
         if len(choice_str)>0:
