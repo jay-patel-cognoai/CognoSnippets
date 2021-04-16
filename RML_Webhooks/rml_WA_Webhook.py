@@ -689,12 +689,12 @@ def whatsapp_webhook(request_packet):
                 if "http://" in final_text_message or "https://" in final_text_message :
                     final_text_message = youtube_link_formatter(final_text_message)
                     send_status = sendWhatsAppTextMessage(API_KEY, final_text_message, mobile, preview_url=True)
-                    time.sleep(2)
+                    # time.sleep(1)
                     is_sandwich_choice = True
                 else:
                     send_status = sendWhatsAppTextMessage(API_KEY, final_text_message, mobile, preview_url=False)
                     is_sandwich_choice = True
-                    time.sleep(2)
+                    # time.sleep(1)
                 recommendation_str = ""
                 choice_str = ""
         else:
@@ -725,12 +725,10 @@ def whatsapp_webhook(request_packet):
                     if small_message != "":
                         if "http://" in small_message or "https://" in small_message :
                             small_message = youtube_link_formatter(small_message)
-
                             send_status = sendWhatsAppTextMessage(API_KEY, small_message, mobile, preview_url=True)
-                            time.sleep(2)
                         else:
                             send_status = sendWhatsAppTextMessage(API_KEY, small_message, mobile, preview_url=False)
-                            time.sleep(2)
+                        time.sleep(0.05)
 
     #   SENDING CARDS, IMAGES, VIDEOS:
         logger.info("Cards: %s", str(cards), extra=log_param)
@@ -797,6 +795,7 @@ def whatsapp_webhook(request_packet):
     #   SENDING CHOICES AND RECOMMENDATIONS BOTH:
         if len(choice_str)>0 and len(recommendation_str)>0:
             mixed_choice = choice_str+""+recommendation_str
+            time.sleep(0.05)
             send_status = sendWhatsAppTextMessage(API_KEY, mixed_choice.replace("\n\n\n","").replace("$$$",""), mobile)
             logger.info("Is Mixed Choices sent: %s", str(send_status), extra=log_param)
             choice_str = ""
@@ -809,27 +808,26 @@ def whatsapp_webhook(request_packet):
                 for bubble in choice_str.split("$$$"):
                     if bubble.strip() == "":
                         continue
-                    # time.sleep(2)
+                    time.sleep(0.05)
                     send_status = sendWhatsAppTextMessage(API_KEY, bubble, mobile)
                 logger.info("Is choices sent: %s", str(send_status), extra=log_param)
             else:
-                time.sleep(1)
+                time.sleep(0.05)
                 send_status = sendWhatsAppTextMessage(API_KEY, choice_str, mobile)
                 logger.info("Is choices sent: %s", str(send_status), extra=log_param)
 
 
     #   SENDING RECOMMENDATIONS:
         if len(recommendation_str)>0:
-            # time.sleep(2)
             if "$$$" in recommendation_str:
                 for bubble in recommendation_str.split("$$$"):
                     if bubble.strip() == "":
                         continue
-                    time.sleep(1)
+                    time.sleep(0.05)
                     send_status = sendWhatsAppTextMessage(API_KEY, bubble, mobile)
                     logger.info("Is recommendations sent: %s", str(send_status), extra=log_param)
             else:
-                time.sleep(1)
+                time.sleep(0.05)
                 send_status = sendWhatsAppTextMessage(API_KEY, recommendation_str, mobile)
                 logger.info("Is recommendations sent: %s", str(send_status), extra=log_param)
 
