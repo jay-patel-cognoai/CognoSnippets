@@ -505,6 +505,13 @@ def whatsapp_webhook(request_packet):
         logger.error("RouteMobileCallBack execute_query response %s",str(whatsapp_response), extra=log_param)            
 
 
+    #   Check LiveChat:
+        if "is_livechat" in whatsapp_response and whatsapp_response["is_livechat"] == "true":
+            if message.lower() == "end chat":
+                livechat_notification = "LiveChat Session has ended."
+                send_status = sendWhatsAppTextMessage(API_KEY, livechat_notification, mobile, preview_url=False)
+            return whatsapp_response
+
 
         #   Auto Trigger Last Intent after Authentication:
         try:
@@ -517,19 +524,12 @@ def whatsapp_webhook(request_packet):
                                 whatsapp_response = execute_query(mobile, BOT_ID, "uat", message, "en", "WhatsApp", json.dumps(channel_params), message)
                                 logger.info("RouteMobileCallBack: execute_query after Auth response %s",str(whatsapp_response), extra=log_param)
         except  Exception as E:
-            logger.error("Cannot identify Last Intent: %s", str(E), extra=log_param)
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            logger.error("Cannot identify Last Intent: %s at %s", str(E), str(exc_tb.tb_lineno), extra=log_param)
         
 
     #   USER OBJECT:    
         user = Profile.objects.get(user_id=str(mobile))
-
-
-    #   Check LiveChat:
-        if "is_livechat" in whatsapp_response and whatsapp_response["is_livechat"] == "true":
-            if message.lower() == "end chat":
-                livechat_notification = "LiveChat Session has ended."
-                send_status = sendWhatsAppTextMessage(API_KEY, livechat_notification, mobile, preview_url=False)
-            return whatsapp_response
 
 
 
