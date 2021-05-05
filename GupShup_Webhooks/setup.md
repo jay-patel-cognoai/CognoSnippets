@@ -29,4 +29,4 @@
 
 3. Inside `/LiveChatApp/assign_tasks.py` look where the gupshup credentials are used. Replace them with those provided by Gupshup for your Bot.
 
-Note: `/LiveChatApp/assign_tasks.py` may or may not contain guphsup `def sendWhatsAppTextMessage` function. So add this function if not added already. 
+Note: `/LiveChatApp/assign_tasks.py` may or may not contain guphsup `def sendWhatsAppTextMessage` function. So add this function if not added already.
