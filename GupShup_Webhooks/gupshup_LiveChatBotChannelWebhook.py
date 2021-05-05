@@ -128,103 +128,44 @@ def get_time_delta(date_str1, date_str2):
         logger.error("get_time_delta: %s at %s", str(E), str(exc_tb.tb_lineno), extra=log_param)
         return delta_obj
 
-def GET_API_KEY():
-    API_KEY = ""
-    username = ""
-    password = ""
-    try:
-        logger.info("=== Inside RouteMobile_GET_API_KEY API ===", extra=log_param)
-        url = "https://apis.rmlconnect.net/auth/v1/login/"
-        payload = {
-            "username":username,
-            "password":password
-        }
-        headers = {
-            'Content-Type': 'application/json'
-        }
-        r = requests.request("POST", url, headers=headers, data = json.dumps(payload), timeout=25, verify=True)
-        content = json.loads(r.text)
-        logger.info("RouteMobile_GET_API_KEY Response: %s", str(content), extra=log_param)
-        if str(r.status_code) == "200" or str(r.status_code) == "201":
-            API_KEY = content["JWTAUTH"]
-            return API_KEY  
-    except requests.Timeout as rt:
-        logger.error("RouteMobile_GET_API_KEY Timeout error: %s", str(e), extra=log_param)
-    except Exception as e:
-        logger.error("RouteMobile_GET_API_KEY Failed: %s", str(e), extra=log_param)
-    return API_KEY
 
-def get_jwt_token():
-    API_KEY = None
-    try:
-        logger.info("=== Inside GET_RML_JWT_TOKEN 1===", extra=log_param)
-        token_obj = RouteMobileToken.objects.all()
-        if token_obj.count() < 0:
-            logger.info("--- token object not found", extra=log_param)
-            API_KEY = GET_API_KEY()
-            token_obj = RouteMobileToken.objects.create(token=API_KEY)
-        elif token_obj[0].token == None or token_obj[0].token == "" or token_obj[0].token == "token":
-            logger.info("--- token object is None", extra=log_param)
-            API_KEY = GET_API_KEY()
-            token_pk = token_obj[0].id
-            token_obj = RouteMobileToken.objects.get(id=token_pk)
-            token_obj.token = API_KEY
-            token_obj.token_generated_on = tz.now()
-            token_obj.save()
-            logger.info("--- token object updated", extra=log_param)
-        else:
-            token_pk = token_obj[0].id
-            token_generated_on = str(token_obj[0].token_generated_on)
-            current_time = str(tz.now())
-            time_diff = get_time_delta(str(token_generated_on), str(current_time))["minutes"]
-            logger.info("--- Token Minutes:  %s", str(time_diff), extra=log_param)
-            API_KEY = token_obj[0].token
-            if float(time_diff) > 55.0:
-                logger.info("--- token expired", extra=log_param)
-                API_KEY = GET_API_KEY()
-                token_obj = RouteMobileToken.objects.get(id=token_pk)
-                token_obj.token = API_KEY
-                token_obj.token_generated_on = tz.now()
-                token_obj.save()
-                logger.info("--- token object updated", extra=log_param)
-        logger.info("=== END GET_RML_JWT_TOKEN 1===", extra=log_param)
-        return API_KEY    
-    except Exception as e:    
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        logger.error("GET_RML_JWT_TOKEN API 1 Failed: %s at %s", str(e), str(exc_tb.tb_lineno), extra=log_param)
-        logger.info("=== END GET_RML_JWT_TOKEN 1===", extra=log_param)
-    return API_KEY
+
+
 
 #   WHATSAPP SEND TEXT MESSAGE API:
-def sendWhatsAppTextMessage(message, phone_number):
-    ''' A function to call send whatsapp text message API.'''
+def sendWhatsAppTextMessage(userid, password, message, phone_number, preview_url="false", is_unicode_text=False):
     import requests
     import urllib
     try:
-        phone_number = "+" + str(phone_number)
-        JWT_TOKEN = get_jwt_token()
-        logger.info(message, extra={'AppName': 'EasyChat', 'user_id': "None", 'source': "None", 'channel': "None", 'bot_id': "None"})
-        url="https://apis.rmlconnect.net/wba/v1/messages"
-        headers={
-            "Authorization": JWT_TOKEN,
-            "Content-Type":"application/json"
-        }
-        payload = {
-            "phone": str(phone_number),
-            "text": str(message)
-        }
-        logger.info(message, extra={'AppName': 'EasyChat', 'user_id': "None", 'source': "None", 'channel': "None", 'bot_id': "None"})
-        resp=requests.post(url=url,data=json.dumps(payload),headers=headers, timeout=25)
-        resp=json.loads(resp.text)
-        if str(resp["message"]) == "message received successfully":
+        logger.info("=== Inside Send WA Text Message API ===", extra=log_param)
+        message = urllib.parse.quote(message.encode('utf-8'))
+        logger.info(message)
+        url = """https://media.smsgupshup.com/GatewayAPI/rest?method=SendMessage&send_to=""" + \
+            str(phone_number)+"""&msg="""+message+"""&msg_type=TEXT&userid="""+str(userid) + \
+            """&auth_scheme=plain&password=""" + \
+            str(password)+"""&v=1.1&format=TEXT&preview_url="""+str(preview_url)
+
+        if is_unicode_text:
+            url+="&data_encoding=Unicode_text"
+
+        logger.info("Send WA Text API URL: %s", url, extra=log_param)
+        r = requests.get(url=url, timeout=15, verify=False)
+        logger.info("Send WA Text API Response: %s", str(r.text), extra=log_param)
+        if str(r.text[:7]) == "success":
+            logger.info("Text message sent succesfully", extra=log_param)
             return True
-    except requests.Timeout as rt:
+        else:
+            logger.error("Failed to Send Text Message.", extra=log_param)
+            return False
+    except requests.Timeout as RT:
         exc_type, exc_obj, exc_tb = sys.exc_info()
-        response["status_message"] = str(e) + str(exc_tb.tb_lineno)
-        logger.error("sendWhatsAppTextMessage API Timeout error: %s", str(e), str(exc_tb.tb_lineno), extra=log_param)
-    except Exception as e:
+        response["status_message"] = str(RT) + str(exc_tb.tb_lineno)
+        logger.error("SendWhatsAppText API Timeout error: %s", str(RT), str(exc_tb.tb_lineno), extra=log_param)
+        return False    
+    except Exception as E:
         exc_type, exc_obj, exc_tb = sys.exc_info()
-        logger.error("sendWhatsAppTextMessage ERROR: %s for %s of user-%s", str(e), str(exc_tb.tb_lineno), str(phone_number), extra={'AppName': 'EasyChat', 'user_id': "None", 'source': "None", 'channel': "None", 'bot_id': "None"})
+        response["status_message"] = str(E) + str(exc_tb.tb_lineno)
+        logger.error("SendWhatsAppText API Failed: %s", str(E), str(exc_tb.tb_lineno), extra=log_param)
     return False
 
 def get_msg_type(file):
@@ -241,43 +182,49 @@ def get_msg_type(file):
 
 
 # WHATSAPP SEND MEDIA MESSAGE API:
-def sendWhatsAppMediaMessage(filename, msg_type, media_url, caption, phone_number):
+def sendWhatsAppMediaMessage(userid, password, media_type, media_url, caption, message, phone_number):
     import requests
     import urllib
     import json
     try:
-        # phone_number = str(phone_number)
-        # phone_number = phone_number[-10:]
-        phone_number = "+" + str(phone_number)
-        JWT_TOKEN = get_jwt_token()
-        url="https://apis.rmlconnect.net/wba/v1/messages"
-        headers={
-            "Authorization": JWT_TOKEN,
-            "Content-Type":"application/json"
-        }
-        payload = {
-            "phone": str(phone_number),
-            "media": {
-                "type": msg_type,
-                "url": str(media_url),
-                "file": filename,
-                "caption": caption
-            }
-        }
-        resp = requests.post(url,headers=headers,data=json.dumps(payload), timeout=25)
-        resp = resp.json()
-        if str(resp["message"]) == "message received successfully":
+        logger.info("=== Inside Send WA Media Message API ===", extra=log_param)
+        logger.info("Media Type: %s", media_type, extra=log_param)
+        if media_type == "document" and caption == None:
+            caption = "FileAttachment"
+        elif caption == None:
+            caption = ""
+        message = urllib.parse.quote(message.encode('utf-8'))
+        caption = urllib.parse.quote(caption.encode('utf-8'))
+        url = """https://media.smsgupshup.com/GatewayAPI/rest?method=SendMediaMessage&send_to="""+str(phone_number)+"""&msg_type="""+str(media_type)+"""&userid="""+str(
+            userid)+"""&auth_scheme=plain&password="""+str(password)+"""&v=1.1&format=json&media_url="""+str(media_url)+"""&caption="""+str(caption)+"""&msg="""+str(message)
+        logger.info("Media Created URL: %s", url, extra=log_param)
+        r = requests.get(url=url, timeout=15)
+        content = json.loads(r.text)
+        logger.info("sendWhatsAppMediaMessage Response: %s", str(content), extra=log_param)
+        
+        if str(content['response']['status']) == "success":
+            logger.info(media_type.upper()+" message sent successfully", extra=log_param)
             return True
-    except requests.Timeout as rt:
+        else:
+            logger.error("Failed to send "+media_type.upper()+" message", extra=log_param)
+            return False
+    except requests.Timeout as RT:
         exc_type, exc_obj, exc_tb = sys.exc_info()
-        response["status_message"] = str(e) + str(exc_tb.tb_lineno)
-        logger.error("sendWhatsAppMediaMessage Timeout error: %s", str(e), str(exc_tb.tb_lineno), extra=log_param)
-    except Exception as e:
+        response["status_message"] = str(RT) + str(exc_tb.tb_lineno)
+        logger.error("SendWhatsAppMediaMessage Timeout error: %s", str(RT), str(exc_tb.tb_lineno), extra=log_param)
+        return False    
+    except Exception as E:
         exc_type, exc_obj, exc_tb = sys.exc_info()
-        logger.error("Error: sendWhatsAppMediaMessage: %s for %s of user-%s", str(e), str(exc_tb.tb_lineno), str(phone_number), extra={'AppName': 'EasyChat', 'user_id': "None", 'source': "None", 'channel': "None", 'bot_id': "None"})
+        response["status_message"] = str(E) + str(exc_tb.tb_lineno)
+        logger.error("SendWhatsAppMediaMessage Failed: %s", str(E), str(exc_tb.tb_lineno), extra=log_param)
     return False
 
+
 def f(x):
+    # == GUPSHUP CREDENTIALS AND DETAILS: ==============================================
+    AUTHENTICATION_NUMBER = '' 
+    AUTHENTICATION_KEY = ''   
+    # ==================================================================================
     logger.info("Inside wa livechat webhook", extra={'AppName': 'EasyChat', 'user_id': "None", 'source': "None", 'channel': "None", 'bot_id': "None"})
     #  SAMPLE REQUEST PACKET:	
     """
@@ -307,7 +254,7 @@ def f(x):
             message = unicode_formatter(message)
             message = get_emojized_message(message)       
             logger.info("Agent Message: %s", str(message), extra={'AppName': 'EasyChat', 'user_id': user_id, 'source': "None", 'channel': "None", 'bot_id': BOT_ID})
-            sendWhatsAppTextMessage(str(message), user_id)
+            sendWhatsAppTextMessage(AUTHENTICATION_NUMBER, AUTHENTICATION_KEY, str(message), str(user_id), is_unicode_text=True)
         else:
             file_path = settings.EASYCHAT_HOST_URL + x["path"]
             logger.info("Agent Attachment: %s", str(file_path), extra={'AppName': 'EasyChat', 'user_id': user_id, 'source': "None", 'channel': "None", 'bot_id': BOT_ID})
@@ -319,16 +266,11 @@ def f(x):
                 message = html_tags_formatter(message)        
                 message = unicode_formatter(message)
                 message = get_emojized_message(message)       
-                if msg_type == "document":
-                    sendWhatsAppMediaMessage(filename, msg_type, file_path, message, user_id)
-                    time.sleep(0.5)
-                    sendWhatsAppTextMessage(str(message), user_id)
-                else:
-                    sendWhatsAppMediaMessage(filename, msg_type, file_path, message, user_id)
+                sendWhatsAppMediaMessage(AUTHENTICATION_NUMBER, AUTHENTICATION_KEY, "Document", str(file_path), str(filename), str(message), str(mobile))
             else:
-                sendWhatsAppMediaMessage(filename, msg_type, file_path, "", user_id)
+                sendWhatsAppMediaMessage(AUTHENTICATION_NUMBER, AUTHENTICATION_KEY, "Document", str(file_path), str(filename), "attachment", str(mobile))
     except Exception as e:
         exc_type, exc_obj, exc_tb = sys.exc_info()
         logger.error("Inside send_message_to_whatsapp: %s at %s",
-                     str(e), str(exc_tb.tb_lineno), extra={'AppName': 'EasyChat', 'user_id': "None", 'source': "None", 'channel': "None", 'bot_id': "1"})
+                     str(e), str(exc_tb.tb_lineno), extra={'AppName': 'EasyChat', 'user_id': "None", 'source': "None", 'channel': "None", 'bot_id': BOT_ID})
         pass
