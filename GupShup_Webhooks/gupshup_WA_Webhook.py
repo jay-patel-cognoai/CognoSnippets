@@ -348,7 +348,7 @@ def whatsapp_webhook(request_packet):
         log_param["bot_id"] = BOT_ID
         logger.info("Sender: %s",str(sender), extra=log_param)
         logger.info("Reciever: %s",str(receiver), extra=log_param)
-        
+        GUPSHUP_MEDIA_CAPTION = str(BOT_ID)+"- Attachment"
     # ==========================================================================   
     
     
@@ -657,7 +657,7 @@ def whatsapp_webhook(request_packet):
                     logger.info("DOCUMENT URL: %s",str(doc_url), extra=log_param)
                     try:
                         logger.info("API KEY AVAILABLE: %s", str(API_KEY), extra=log_param)
-                        send_status = sendWhatsAppMediaMessage(AUTHENTICATION_NUMBER, AUTHENTICATION_KEY, "Document", str(doc_url), str(doc_caption), "NIPPON India Mutual Funds", str(mobile))
+                        send_status = sendWhatsAppMediaMessage(AUTHENTICATION_NUMBER, AUTHENTICATION_KEY, "Document", str(doc_url), str(doc_caption), GUPSHUP_MEDIA_CAPTION, str(mobile))
                         logger.info("Is Card sent: %s", str(send_status), extra=log_param)
                     except  Exception as E:
                         logger.error("Cannot send card with document: %s", str(E), extra=log_param)
@@ -671,7 +671,7 @@ def whatsapp_webhook(request_packet):
                     caption = "*"+title+"* "+content+" "+redirect_url
                     if image_url !="":
                         logger.info("Card Image available", extra=log_param)
-                        send_status = sendWhatsAppMediaMessage(AUTHENTICATION_NUMBER, AUTHENTICATION_KEY, "Image", str(image_url), caption, "NIPPON India Mutual Funds", str(mobile))
+                        send_status = sendWhatsAppMediaMessage(AUTHENTICATION_NUMBER, AUTHENTICATION_KEY, "Image", str(image_url), caption, GUPSHUP_MEDIA_CAPTION, str(mobile))
                         logger.info("Is Card with image sent: %s", str(send_status), extra=log_param)
                     else:
                         send_status = sendWhatsAppTextMessage(AUTHENTICATION_NUMBER, AUTHENTICATION_KEY, str(get_emojized_message(caption)), str(mobile), preview_url="true")
@@ -694,11 +694,11 @@ def whatsapp_webhook(request_packet):
             for i in range(len(images)):
                 if 'content' in str(images[i]):
                     logger.info("== Image with caption ==", extra=log_param)
-                    send_status = sendWhatsAppMediaMessage(AUTHENTICATION_NUMBER, AUTHENTICATION_KEY, "Image", str(images[i]["img_url"]), str(images[i]['content']), "NIPPON India Mutual Funds", str(mobile))
+                    send_status = sendWhatsAppMediaMessage(AUTHENTICATION_NUMBER, AUTHENTICATION_KEY, "Image", str(images[i]["img_url"]), str(images[i]['content']), GUPSHUP_MEDIA_CAPTION, str(mobile))
                     logger.info("Is Image sent: %s", str(send_status), extra=log_param)
                 else:
                     logger.info("== Image without caption ==")
-                    send_status = sendWhatsAppMediaMessage(AUTHENTICATION_NUMBER, AUTHENTICATION_KEY, "Image", str(images[i]), "NIPPON India Mutual Funds", "NIPPON India Mutual Funds", str(mobile))
+                    send_status = sendWhatsAppMediaMessage(AUTHENTICATION_NUMBER, AUTHENTICATION_KEY, "Image", str(images[i]), GUPSHUP_MEDIA_CAPTION, GUPSHUP_MEDIA_CAPTION, str(mobile))
                     logger.info("Is Image sent: %s", str(send_status), extra=log_param)
 
 

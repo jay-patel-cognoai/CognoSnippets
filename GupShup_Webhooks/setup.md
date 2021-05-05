@@ -20,3 +20,13 @@
     change  `AUTHENTICATION_NUMBER = "gupshup_AUTHENTICATION_NUMBER_provided"`
             `AUTHENTICATION_KEY = "gupshup_AUTHENTICATION_KEY_provided"`
 
+# Steps to enable GupShup WA LiveChat
+1. After GupShup WA Webhook setup completion and assuming LiveChat is already enabled in the bot configuration, copy paste `gupshup_LiveChatBotChannelwebhook.py` into LiveChatBotChannelWebhook model object from Admin panel.
+
+2. Inside `def f(x)` change the credentials as:
+        AUTHENTICATION_NUMBER = 'gupshup_AUTHENTICATION_NUMBER_provided' 
+        AUTHENTICATION_KEY = 'gupshup_AUTHENTICATION_KEY_provided'   
+
+3. `gupshup_LiveChatBotChannelwebhook` uses cached version of API Key Function, so make sure steps mentioned earlier to use cached api key are implemented first.
+
+4. Inside `/LiveChatApp/assign_tasks.py` look where the gupshup credentials are used. Replace them with those provided by RML for your Bot.
