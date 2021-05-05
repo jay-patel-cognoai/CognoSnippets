@@ -20,5 +20,9 @@ Currently includes:
 
       see setup guide: https://github.com/VinayTomarAIC/WhatsAppWebhooks/blob/main/GupShup_Webhooks/setup.md
       
+      supports: 
+            
+            - LiveChat v3.5
+      
       
 Adding soon: Infobip, Netcore
