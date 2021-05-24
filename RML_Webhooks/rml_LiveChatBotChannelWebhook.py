@@ -84,13 +84,22 @@ def html_tags_formatter(message):
         message = message.replace(tag, tags[tag])
         
     if "</a>" in message:
-        message = message.replace("mailto:","")
+        end = "\n"
+        if "tel:" in message:
+            end = ""
+        message = message.replace("mailto:","").replace("tel:","")
         soup = BeautifulSoup(message, "html.parser")
         for link in soup.findAll('a'):
             href = link.get('href')
             link_name = link.string
             link_element = message[message.find("<a"):message.find("</a>")]+"</a>"
-            message = message.replace(link_element, link_name+" "+href+"\n")
+            new_link_element = link_name+" "+href+"\n"
+            if link_name.replace("http://","").replace("https://","").strip() == href.replace("http://","").replace("https://","").strip():
+                message = message.replace(link_element, href+end)
+            else:
+                message = message.replace(link_element, link_name+" "+href+end)
+            
+            message = message.replace(link_element, new_link_element)
     return message
 
 def unicode_formatter(message):
