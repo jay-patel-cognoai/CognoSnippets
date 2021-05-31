@@ -536,8 +536,8 @@ def check_opt_status(mobile_number):
     return status
 
 
-#   Send Push Message:
-def send_push_message(template_name, template_type, template_language, template_variables, mobile_number, media_url=None):
+#   Send Template Based Push Message (Generic Function):
+def send_push_message(template_name, template_type, template_language, template_variables, mobile_number, media_url=None, button_urls=None):
     rm_username = ""
     rm_password = ""
     API_KEY = GET_RML_JWT_TOKEN(rm_username, rm_password)
@@ -553,8 +553,21 @@ def send_push_message(template_name, template_type, template_language, template_
 
         if template_type == "text":
            error_message,is_send = pushWhatsAppTextMessage(api_key=API_KEY, language=template_language, template_name=template_name, template_variables=template_variables, phone_number=mobile_number)
-        else:
+
+        elif template_type in ["image", "document", "video"]:
            error_message,is_send = pushWhatsAppMediaMessage(api_key=API_KEY, media_type=template_type, media_url=media_url, language=template_language, template_name=template_name, template_variables=template_variables, phone_number=mobile_number)
+
+        elif template_type == "quick_reply":
+            error_message, is_send = pushWhatsAppQuickReplyMessage(api_key=API_KEY, language=template_language, template_name=template_name, phone_number=mobile_number, template_variables=template_variables, media_type=None, media_url=None)
+
+        elif template_type.replace("quick_reply_","") in ["image", "document", "video"]: # e.g "quick_reply_image, quick_reply_video, quick_reply_document"
+            error_message, is_send = pushWhatsAppQuickReplyMessage(api_key=API_KEY, language=template_language, template_name=template_name, phone_number=mobile_number, template_variables=template_variables, media_type=template_type.replace("quick_reply_",""), media_url=media_url)
+
+        elif template_type == "cta":
+            error_message, is_send = pushWhatsAppCTAMessage(api_key=API_KEY, language=template_language, template_name=template_name, phone_number=mobile_number, template_variables=template_variables, dynamic_urls=button_urls, media_type=None, media_url=None)
+
+        elif template_type.replace("cta_","") in ["image", "document", "video"]: # e.g "cta_reply_image, cta_reply_video, cta_reply_document"
+            error_message, is_send = pushWhatsAppCTAMessage(api_key=API_KEY, language=template_language, template_name=template_name, phone_number=mobile_number, template_variables=template_variables, dynamic_urls=button_urls, media_type=template_type.replace("cta_",""), media_url=media_url)
 
         if is_send == True:
            push_status["push_message_sent"] = True
