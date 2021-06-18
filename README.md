@@ -13,7 +13,8 @@ Currently includes:
             - Call-to-action
          
             - Quick Reply
-
+            
+            - NPS (see guide: https://doc.clickup.com/p/h/38qfb-998/6dadcaa9720af53)
 
       
   2. GupShup
