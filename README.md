@@ -14,7 +14,7 @@ Currently includes:
          
             - Quick Reply
             
-            - NPS (see guide: https://doc.clickup.com/p/h/38qfb-998/6dadcaa9720af53)
+            - NPS 
 
       
   2. GupShup
@@ -27,3 +27,5 @@ Currently includes:
       
       
 Adding soon: Infobip, Netcore
+
+See WhatsApp NPS Guide here: https://doc.clickup.com/p/h/38qfb-998/6dadcaa9720af53
