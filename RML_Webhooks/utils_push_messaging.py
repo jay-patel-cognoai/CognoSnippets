@@ -78,7 +78,7 @@ def GET_RML_JWT_TOKEN(username, password):
     try:
         logger.info("=== Inside GET_RML_JWT_TOKEN (FOR PUSH MESSAGING)===", extra=log_param)
         token_obj = RouteMobileToken.objects.all()
-        if token_obj.count() < 0:
+        if token_obj.count() == 0:
             logger.info("--- token object not found", extra=log_param)
             logger.info("--- getting token from token API", extra=log_param)
             API_KEY = GET_API_KEY(username, password)
