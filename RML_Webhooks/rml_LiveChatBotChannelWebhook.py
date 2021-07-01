@@ -165,7 +165,7 @@ def get_jwt_token():
     try:
         logger.info("=== Inside GET_RML_JWT_TOKEN 1===", extra=log_param)
         token_obj = RouteMobileToken.objects.all()
-        if token_obj.count() < 0:
+        if token_obj.count() == 0:
             logger.info("--- token object not found", extra=log_param)
             API_KEY = GET_API_KEY()
             token_obj = RouteMobileToken.objects.create(token=API_KEY)
