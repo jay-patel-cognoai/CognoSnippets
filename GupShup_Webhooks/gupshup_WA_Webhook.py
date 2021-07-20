@@ -636,7 +636,7 @@ def whatsapp_webhook(request_packet):
                         if "http://" in small_message or "https://" in small_message :
                             small_message = youtube_link_formatter(small_message)
                             send_status = sendWhatsAppTextMessage(AUTHENTICATION_NUMBER, AUTHENTICATION_KEY, small_message, str(mobile),  preview_url="true")
-                         else:
+                        else:
                             send_status = sendWhatsAppTextMessage(AUTHENTICATION_NUMBER, AUTHENTICATION_KEY, small_message, str(mobile), is_unicode_text=True)
                         time.sleep(0.05)
 
