@@ -16,7 +16,11 @@ from bs4 import BeautifulSoup
 from django.utils import timezone as tz
 import re
 
-log_param={'AppName': 'EasyChat', 'user_id': 'None', 'source': 'None', 'channel': 'WhatsApp', 'bot_id': 'None'}
+log_param={'AppName': 'EasyChat',
+           'user_id': 'None',
+           'source': 'None',
+           'channel': 'WhatsApp',
+           'bot_id': 'None'}
 
 # ========================== TEXT FORMATTING FUNCTIONS =========================
 def youtube_link_formatter(message):
